@@ -1,0 +1,94 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 0;
+}
+.quiz-container {
+    background-color: rgba(255, 255, 255, 0.9);
+    width: 100%;
+    max-width: 600px;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    animation: fadeIn 1s ease-in-out;
+}
+.question {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+.option {
+    margin: 10px 0;
+}
+.btn {
+    background: linear-gradient(135deg, #007bff, #0056b3); /* Blue gradient */
+    color: #fff;
+    border: none;
+    padding: 15px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 15px;
+    transition: background 0.3s ease, transform 0.2s;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+.btn:hover {
+    background: linear-gradient(135deg, #0056b3, #007bff); /* Blue gradient */
+    transform: scale(1.05);
+}
+.timer {
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #e63946;
+    font-size: 18px;
+    animation: pulse 1s infinite;
+}
+.result {
+    font-weight: bold;
+    text-align: center;
+    margin-top: 30px;
+    font-size: 20px;
+    color: #333;
+}
+.input-box {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+.next-btn {
+    background: linear-gradient(135deg, #28a745, #218838); /* Green gradient */
+}
+.next-btn:hover {
+    background: linear-gradient(135deg, #218838, #28a745); /* Green gradient */
+}
+.retry-btn {
+    background: linear-gradient(135deg, #ff4757, #e84118); /* Red gradient */
+}
+.retry-btn:hover {
+    background: linear-gradient(135deg, #e84118, #ff4757); /* Red gradient */
+}
+.start-btn {
+    background: linear-gradient(135deg, #1e90ff, #3742fa); /* Blue gradient */
+}
+.start-btn:hover {
+    background: linear-gradient(135deg, #3742fa, #1e90ff); /* Blue gradient */
+}

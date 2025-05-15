@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Online Quiz System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="quiz-container" id="start-container">
+        <h2>Enter your name:</h2>
+        <input type="text" id="username" placeholder="Your name" class="input-box">
+        <button class="btn start-btn" onclick="startQuiz()">Start Quiz</button>
+    </div>
+
+    <div class="quiz-container" id="quiz-container" style="display: none;">
+        <div class="timer">Time Left: <span id="time">30</span>s</div>
+        <div class="question" id="question">Loading question...</div>
+        <div id="options"></div>
+        <button class="btn next-btn" onclick="nextQuestion()">Next</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <div class="quiz-container" id="end-container" style="display: none;">
+        <div class="result" id="final-result"></div>
+        <button class="btn retry-btn" onclick="retryQuiz()">Retry</button>
+        <h2>Leaderboard</h2>
+        <div id="leaderboard"></div>
+    </div>
+
+    <script>
+        const questions = [
+            { q: "What is the capital of France?", options: ["Paris", "London", "Berlin", "Madrid"], answer: "Paris", image: "url('https://images.hindustantimes.com/img/2022/11/10/1600x900/Soccer-World-Cup-France-1_1668090346718_1668090346718_1668090368821_1668090368821.jpg')" },
+            { q: "Which language is used for web development?", options: ["Python", "Java", "HTML", "C++"], answer: "HTML", image: "url('https://wallpaperaccess.com/full/4391661.jpg')" },
+            { q: "What is 5 + 3?", options: ["5", "8", "10", "15"], answer: "8", image: "url('https://images.wallpaperscraft.com/image/single/day_of_pi_mathematics_number_pi_107930_1600x900.jpg')" },
+            { q: "What is the largest planet in our solar system?", options: ["Earth", "Mars", "Jupiter", "Saturn"], answer: "Jupiter", image: "url('https://wallpapersmug.com/download/1600x900/ba010e/outer-space-fantasy-art.jpg')" },
+            { q: "Who wrote 'To Kill a Mockingbird'?", options: ["Harper Lee", "Mark Twain", "Ernest Hemingway", "F. Scott Fitzgerald"], answer: "Harper Lee", image: "url('https://images.wallpaperscraft.com/image/single/book_tree_branch_272684_1600x900.jpg')" },
+            { q: "What is the chemical symbol for water?", options: ["H2O", "O2", "CO2", "NaCl"], answer: "H2O", image: "url('https://th.bing.com/th/id/R.4546951297eb497c7d6a840a7da9e8c2?rik=9aP6U1SQaE2%2b8w&riu=http%3a%2f%2fcdn.wallpapersafari.com%2f64%2f26%2f4Karqe.jpg&ehk=6wN7W79JcSpGhjLb3vH59ZracQfCoiq8yRb2M4lHg54%3d&risl=&pid=ImgRaw&r=0')" },
+            { q: "What is the speed of light?", options: ["300,000 km/s", "150,000 km/s", "450,000 km/s", "600,000 km/s"], answer: "300,000 km/s", image: "url('https://images.hdqwalls.com/download/dock-light-bridge-5k-r0-1600x900.jpg')" },
+            { q: "Who painted the Mona Lisa?", options: ["Vincent van Gogh", "Pablo Picasso", "Leonardo da Vinci", "Claude Monet"], answer: "Leonardo da Vinci", image: "url('https://wallpapers.com/images/file/sand-art-pictures-1600-x-900-898ej748xi8r1w0g.jpg')" },
+            { q: "What is the capital of Japan?", options: ["Tokyo", "Kyoto", "Osaka", "Nagoya"], answer: "Tokyo", image: "url('https://images.hdqwalls.com/download/japenese-street-4k-8p-1600x900.jpg')" },
+            { q: "Which football club has won the most Ligue 1 titles?", options: ["PSG", "Marseille", "Lyon", "Saint-Étienne"], answer: "Saint-Étienne", image: "url('https://wallpaperaccess.com/full/3964876.jpg')" },
+            { q: "Which football club has the most consecutive Ligue 1 titles?", options: ["PSG", "Marseille", "Lyon", "Saint-Étienne"], answer: "PSG", image: "url('https://cdn.wallpapersafari.com/5/46/F2ZCUm.jpg')" }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let timer;
+        let timeLeft = 30;
+        let username = "";
+        let randomizedQuestions = [];
+
+        function startQuiz() {
+            username = document.getElementById('username').value;
+            if (username.trim() === "") {
+                alert("Please enter your name.");
+                return;
+            }
+            document.getElementById('start-container').style.display = 'none';
+            document.getElementById('quiz-container').style.display = 'block';
+            randomizedQuestions = questions.sort(() => Math.random() - 0.5);
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            clearInterval(timer);
+            timeLeft = 30;
+            document.getElementById('time').textContent = timeLeft;
+            document.getElementById('result').textContent = "";
+            const qData = randomizedQuestions[currentQuestion];
+            document.getElementById('question').textContent = qData.q;
+            document.body.style.backgroundImage = qData.image;
+            document.body.style.backgroundSize = "cover";
+            document.body.style.backgroundRepeat = "no-repeat";
+            document.body.style.backgroundPosition = "center";
+
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = "";
+            qData.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.textContent = opt;
+                btn.className = 'option btn';
+                btn.onclick = () => checkAnswer(opt);
+                optionsDiv.appendChild(btn);
+            });
+
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('time').textContent = timeLeft;
+                if (timeLeft === 0) nextQuestion();
+            }, 1000);
+        }
+
+        function checkAnswer(selected) {
+            const correct = randomizedQuestions[currentQuestion].answer;
+            if (selected === correct) {
+                score++;
+                document.getElementById('result').textContent = "Correct! 🎯";
+            } else {
+                document.getElementById('result').textContent = `Wrong! ❌ The correct answer is ${correct}.`;
+            }
+            clearInterval(timer);
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < randomizedQuestions.length - 1) {
+                currentQuestion++;
+                loadQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function endQuiz() {
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('end-container').style.display = 'block';
+            document.getElementById('final-result').textContent = `Quiz Over! 🎉 Your Score: ${score} / ${randomizedQuestions.length}`;
+            document.body.style.backgroundImage = "url('https://wallpaperaccess.com/full/3126530.jpg')";
+            updateLeaderboard();
+        }
+
+        function retryQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('end-container').style.display = 'none';
+            document.getElementById('start-container').style.display = 'block';
+            document.body.style.backgroundImage = "url('https://images.hdqwalls.com/download/japan-anime-sky-4k-3k-1600x900.jpg')";
+        }
+
+        function updateLeaderboard() {
+            const leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+            leaderboard.push({ name: username, score: score });
+            leaderboard.sort((a, b) => b.score - a.score);
+            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+
+            const leaderboardDiv = document.getElementById('leaderboard');
+            leaderboardDiv.innerHTML = leaderboard.map(entry => `<div>${entry.name}: ${entry.score}</div>`).join('');
+        }
+
+        document.body.style.backgroundImage = "url('https://images.hdqwalls.com/download/japan-anime-sky-4k-3k-1600x900.jpg')";
+    </script>
+</body>
+</html>
